@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { GenreResponseProps } from "../@types";
 import { Button } from "./Button";
 
@@ -7,7 +8,7 @@ interface SideBarProps {
   handleClickButton: (id: number) => void;
 }
 
-export function SideBar({
+function SideBarComponent({
   handleClickButton,
   selectedGenreId,
   genres,
@@ -32,3 +33,16 @@ export function SideBar({
     </nav>
   );
 }
+
+export const SideBar = memo(SideBarComponent, (prevProps, nextProps) => {
+  return (
+    Object.is(prevProps.genres, nextProps.genres) &&
+    Object.is(prevProps.selectedGenreId, nextProps.selectedGenreId)
+  );
+});
+
+// memo -> props are different?
+// useMemo
+// useCallback -> function doesn't occupy new memory
+// Lazy loading -> load only when necessary
+// Virtu
