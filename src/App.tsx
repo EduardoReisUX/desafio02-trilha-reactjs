@@ -6,7 +6,7 @@ import "./styles/content.scss";
 
 import { MovieProps, GenreResponseProps } from "./@types";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { api } from "./services/api";
 
 type AllStates = {
@@ -57,11 +57,11 @@ export function App() {
     updateStates();
   }, []);
 
-  const handleClickButton = (id: number) => {
+  const handleClickButton = useCallback((id: number) => {
     if (id === allStates.selectedGenreId) return;
 
     updateStates(id);
-  };
+  }, []);
 
   return (
     <div style={{ display: "flex", flexDirection: "row" }}>
