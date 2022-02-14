@@ -9,37 +9,59 @@ import { MovieProps, GenreResponseProps } from "./@types";
 import { useEffect, useState } from "react";
 import { api } from "./services/api";
 
+type AllStates = {
+  selectedGenreId: number;
+  movies: MovieProps[];
+  genres: GenreResponseProps[];
+  selectedGenre: GenreResponseProps;
+};
+
 export function App() {
-  const [selectedGenreId, setSelectedGenreId] = useState(1);
-  const [movies, setMovies] = useState<MovieProps[]>([]);
-  const [genres, setGenres] = useState<GenreResponseProps[]>([]);
-  const [selectedGenre, setSelectedGenre] = useState<GenreResponseProps>(
-    {} as GenreResponseProps
-  );
+  const [allStates, setAllStates] = useState<AllStates>({
+    selectedGenreId: 1,
+    movies: [],
+    genres: [],
+    selectedGenre: {} as GenreResponseProps,
+  });
+  const { selectedGenre, movies, genres, selectedGenreId } = allStates;
 
-  useEffect(() => {
+  function updateStates(id: number = 1) {
+    let datas = allStates;
+    datas.selectedGenreId = id;
+
     api
-      .get<MovieProps[]>(`movies/?Genre_id=${selectedGenreId}`)
+      .get<MovieProps[]>(`movies/?Genre_id=${allStates.selectedGenreId}`)
       .then((response) => {
-        setMovies(response.data);
+        datas.movies = response.data;
       });
 
     api
-      .get<GenreResponseProps>(`genres/${selectedGenreId}`)
+      .get<GenreResponseProps>(`genres/${allStates.selectedGenreId}`)
       .then((response) => {
-        setSelectedGenre(response.data);
+        datas.selectedGenre = response.data;
       });
-  }, [selectedGenreId]);
+
+    api
+      .get<GenreResponseProps[]>("genres")
+      .then((response) => {
+        datas.genres = response.data;
+      })
+      .finally(() => {
+        setAllStates({
+          ...datas,
+        });
+      });
+  }
 
   useEffect(() => {
-    api.get<GenreResponseProps[]>("genres").then((response) => {
-      setGenres(response.data);
-    });
+    updateStates();
   }, []);
 
-  function handleClickButton(id: number) {
-    setSelectedGenreId(id);
-  }
+  const handleClickButton = (id: number) => {
+    if (id === allStates.selectedGenreId) return;
+
+    updateStates(id);
+  };
 
   return (
     <div style={{ display: "flex", flexDirection: "row" }}>

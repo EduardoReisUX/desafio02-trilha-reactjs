@@ -35,14 +35,5 @@ function SideBarComponent({
 }
 
 export const SideBar = memo(SideBarComponent, (prevProps, nextProps) => {
-  return (
-    Object.is(prevProps.genres, nextProps.genres) &&
-    Object.is(prevProps.selectedGenreId, nextProps.selectedGenreId)
-  );
+  return Object.is(prevProps.genres, nextProps.genres);
 });
-
-// memo -> props are different?
-// useMemo
-// useCallback -> function doesn't occupy new memory
-// Lazy loading -> load only when necessary
-// Virtu
